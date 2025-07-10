@@ -1,37 +1,19 @@
 const pool = require('../config/db.config');
 
 /**
- * Get all unique CM codes from the database
- * @returns {Promise<Array>} Array of CM codes with descriptions
+ * Fetch all CM codes
  */
 async function getAllCMCodes() {
-  const query = `
-    SELECT DISTINCT cm_code, cm_description, created_at, updated_at, company_name, signoff_by, signoff_date, signoff_status, document_url 
-    FROM public.sdp_contractors 
-    ORDER BY cm_code;
-  `;
-  
-  const result = await pool.query(query);
+  const result = await pool.query('SELECT id, cm_code, cm_description, created_at, updated_at, company_name, signoff_by, signoff_date, signoff_status, document_url FROM sdp_contractors');
   return result.rows;
 }
 
 /**
- * Get a specific CM code by code
- * @param {string} cmCode - The CM code to search for
- * @returns {Promise<Object|null>} CM code data or null if not found
+ * Fetch CM code by cm_code
  */
-async function getCMCodeByCode(cmCode) {
-  const query = `
-    SELECT id, cm_code, cm_description, created_at, updated_at
-    FROM public.sdp_cm 
-    WHERE cm_code = $1;
-  `;
-  
-  const result = await pool.query(query, [cmCode]);
-  return result.rows.length > 0 ? result.rows[0] : null;
+async function getCMCodeByCode(cm_code) {
+  const result = await pool.query('SELECT id, cm_code, cm_description, created_at, updated_at, company_name, signoff_by, signoff_date, signoff_status, document_url FROM sdp_contractors WHERE cm_code = $1', [cm_code]);
+  return result.rows;
 }
 
-module.exports = { 
-  getAllCMCodes, 
-  getCMCodeByCode 
-}; 
+module.exports = { getAllCMCodes, getCMCodeByCode }; 
